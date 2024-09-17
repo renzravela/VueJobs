@@ -5,8 +5,17 @@ import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import { RouterLink } from "vue-router";
 import axios from "axios";
 
+interface Job {
+  id: number;
+  title: string;
+  type: string;
+  description: string;
+  salary: number;
+  location: string;
+}
+
 const state = reactive({
-  jobs: [],
+  jobs: [] as Job[],
   isLoading: true,
 });
 

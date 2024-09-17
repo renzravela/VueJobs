@@ -2,7 +2,6 @@
 import { ref, onMounted } from "vue";
 
 interface Task {
-    id: String,
     title: String,
     completed: Boolean,
 }
@@ -11,7 +10,6 @@ const name = ref<string>("Renz Aerol Ravela");
 const status = ref<boolean>(true);
 const tasks = ref<Task[]>([]);
 const newTask = ref<Task>({
-    id: crypto.randomUUID,
     title: '',
     completed: false
 })
@@ -26,9 +24,8 @@ const toggleBtn = () => {
 
 const handleSubmit = () => {
   if (newTask.value.title.trim() !== '') {
-    tasks.value.push({ ...newTask.value, id: crypto.randomUUID() });
+    tasks.value.push({ ...newTask.value });
     newTask.value = {
-      id: crypto.randomUUID(),
       title: '',
       completed: false
     };
@@ -64,7 +61,7 @@ onMounted( async () => {
 
     <h3>Task:</h3>
     <ul>
-      <li v-for="(task, index) in tasks" :key="task.id">{{ task.title }} <button @click="handleDelete(index)">Delete</button></li>
+      <li v-for="(task, index) in tasks" :key="index">{{ task.title }} <button @click="handleDelete(index)">Delete</button></li>
     </ul>
 
     <button @click="toggleBtn">Toggle</button>

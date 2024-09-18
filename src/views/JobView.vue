@@ -14,7 +14,7 @@ interface Company {
 }
 
 interface Job {
-  id: number;
+  id: string;
   title: string;
   type: string;
   location: string;

@@ -4,19 +4,21 @@ import { defineProps, onMounted, reactive } from "vue";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import { RouterLink } from "vue-router";
 import axios from "axios";
+import JobsData from "../jobs.json";
 
 interface Job {
-  id: number;
+  id: string;
   title: string;
   type: string;
   description: string;
-  salary: number;
+  salary: string;
   location: string;
 }
 
 const state = reactive({
   jobs: [] as Job[],
   isLoading: true,
+  local_data: JobsData.jobs as Job[], 
 });
 
 interface Props {
@@ -30,7 +32,8 @@ onMounted(async () => {
     const response = await axios.get("/api/jobs");
     state.jobs = response.data;
   } catch (error) {
-    console.error(error);
+    console.error("Failed to fetch jobs, loading local data:", error);
+    state.jobs = state.local_data; // Use local JSON data if API request fails
   } finally {
     state.isLoading = false;
   }
@@ -45,17 +48,14 @@ onMounted(async () => {
         Browse Jobs
       </h2>
       <div
-        v-if="state.isLoading == true"
+        v-if="state.isLoading"
         class="text-center text-gray-500 py-6"
       >
         <PulseLoader />
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" v-else>
         <div
-          v-for="(job, index) in state.jobs.slice(
-            0,
-            props.limit || state.jobs.length
-          )"
+          v-for="(job, index) in state.jobs.slice(0, props.limit || state.jobs.length)"
           :key="index"
         >
           <Job
@@ -72,8 +72,9 @@ onMounted(async () => {
         <RouterLink
           to="/jobs"
           class="block bg-black text-white text-center py-4 px-6 rounded-xl hover:bg-gray-700"
-          >View All Jobs</RouterLink
         >
+          View All Jobs
+        </RouterLink>
       </section>
     </div>
   </section>
